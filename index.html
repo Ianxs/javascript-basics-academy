@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="JS Academy — An interactive, gamified W3Schools-style learning platform for mastering JavaScript Basics: Variables, Data Types, Functions, Arrays, and Objects.">
+  <meta name="keywords" content="JavaScript Basics, Learn JS, W3Schools style, Coding Sandbox, Gamified Learning, Web Development">
+  <meta name="author" content="JS Basics Academy">
+  <meta name="theme-color" content="#0b0f19">
+
+  <title>JS Academy — Interactive JavaScript Basics</title>
+
+  <!-- Google Fonts: Modern Headings + Readable Body + Crisp Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Core CSS Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/content.css">
+  <link rel="stylesheet" href="css/editor.css">
+  <link rel="stylesheet" href="css/gamification.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Top Sticky Header -->
+  <header class="header" role="banner">
+    <div class="header-left">
+      <button class="menu-toggle-btn" id="menu-toggle-btn" aria-label="Toggle navigation menu">
+        ☰
+      </button>
+      <a href="#variables" class="brand-logo" title="JS Basics Academy">
+        <span class="logo-badge">JS</span>
+        <span class="brand-text">Basics<span>Academy</span></span>
+      </a>
+    </div>
+
+    <!-- Center Course Progress Tracker -->
+    <div class="header-center">
+      <div class="course-progress-container">
+        <div class="progress-labels">
+          <span>Course Completion</span>
+          <span id="header-progress-text">0% Complete (0/5)</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="header-progress-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Gamification Stats & Controls -->
+    <div class="header-right">
+      <div class="stat-pill xp-pill" title="Experience Points">
+        <span>⚡</span>
+        <span id="header-xp-count">0 XP</span>
+      </div>
+
+      <div class="stat-pill streak-pill" title="Daily Learning Streak">
+        <span>🔥</span>
+        <span id="header-streak-count">1 Day</span>
+      </div>
+
+      <button class="header-btn badges-btn" id="header-badges-btn" title="View Badges & Achievements">
+        <span>🏆</span>
+        <span>Badges</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Application Wrapper (Sidebar + Dynamic Content View) -->
+  <div class="app-container">
+
+    <!-- Mobile Drawer Backdrop -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <!-- Left Navigation Sidebar -->
+    <aside class="sidebar" id="app-sidebar" role="navigation" aria-label="Course Topics">
+      <div>
+        <div class="sidebar-section-title">Course Curriculum</div>
+        <ul class="topic-nav-list" id="sidebar-topics-list">
+          <!-- Dynamically populated by navigation.js -->
+        </ul>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <div class="course-badge-info">
+          <span>🎓 Level 1: Apprentice</span>
+          <span style="color: var(--accent-js); font-weight: 700;">JS 101</span>
+        </div>
+        <button class="reset-progress-link" id="reset-all-btn">
+          Reset Progress &amp; Data
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Pane -->
+    <main class="main-content" id="main-content" role="main">
+      <div id="main-topic-view">
+        <!-- Dynamically rendered by content-renderer.js based on hash routing -->
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Global Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-content">
+      <div>
+        <strong>JavaScript Basics School Website</strong> — Designed for interactive learning &amp; video presentation.
+      </div>
+      <div class="footer-links">
+        <a href="#variables">Variables</a>
+        <a href="#datatypes">Data Types</a>
+        <a href="#functions">Functions</a>
+        <a href="#arrays">Arrays</a>
+        <a href="#objects">Objects</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Badges & Achievements Modal -->
+  <div class="modal-overlay" id="badges-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title-badges">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title-badges">
+          <span>🏆</span> Your Badges &amp; Achievements
+        </h2>
+        <button class="modal-close-btn" id="badges-modal-close" aria-label="Close modal">✕</button>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.92rem;">
+        Complete quizzes with high scores, run interactive code snippets, and finish topics to unlock achievements!
+      </p>
+      <div class="badges-grid" id="badges-modal-grid">
+        <!-- Dynamically populated by gamification.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset Confirmation Modal -->
+  <div class="modal-overlay" id="reset-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title-reset">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title-reset" style="color: var(--danger);">
+          <span>⚠️</span> Reset All Progress?
+        </h2>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: var(--space-lg);">
+        This will erase all your earned XP, quiz scores, unlocked badges, and streak data. Are you sure you want to start fresh?
+      </p>
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-md);">
+        <button class="btn btn-secondary" id="cancel-reset-action">Cancel</button>
+        <button class="btn btn-primary" id="confirm-reset-action" style="background: var(--danger); border-color: var(--danger);">
+          Yes, Reset Everything
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Core JavaScript Architecture -->
+  <script src="data/topics.js"></script>
+  <script src="data/quizzes.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/gamification.js"></script>
+  <script src="js/code-runner.js"></script>
+  <script src="js/editor-component.js"></script>
+  <script src="js/quiz-engine.js"></script>
+  <script src="js/content-renderer.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

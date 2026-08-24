@@ -1,0 +1,269 @@
+/* ==========================================================================
+   INTERACTIVE "TRY IT YOURSELF" CODE RUNNER STYLING
+   W3Schools-style Split-Pane Live Editor & Output Console
+   ========================================================================== */
+
+.code-runner-container {
+  background: var(--editor-bg);
+  border: 1px solid var(--editor-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+  margin: var(--space-xl) 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   EDITOR TOOLBAR
+   -------------------------------------------------------------------------- */
+.editor-toolbar {
+  background: #0d1322;
+  border-bottom: 1px solid var(--editor-border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.editor-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.window-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.window-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+.window-dot.red { background: #ef4444; }
+.window-dot.yellow { background: #f59e0b; }
+.window-dot.green { background: #10b981; }
+
+.editor-filename {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-shortcut-hint {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  margin-right: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   SPLIT WORKSPACE (CODE EDITOR + OUTPUT CONSOLE)
+   -------------------------------------------------------------------------- */
+.editor-workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 280px;
+  background: var(--editor-bg);
+}
+
+@media (max-width: 860px) {
+  .editor-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Code Input Pane */
+.editor-pane-code {
+  position: relative;
+  display: flex;
+  border-right: 1px solid var(--editor-border);
+  background: var(--editor-bg);
+}
+
+@media (max-width: 860px) {
+  .editor-pane-code {
+    border-right: none;
+    border-bottom: 1px solid var(--editor-border);
+  }
+}
+
+.line-numbers {
+  width: 44px;
+  padding: 16px 8px;
+  background: var(--editor-gutter);
+  color: var(--editor-line-num);
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  text-align: right;
+  user-select: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.code-textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #f8fafc;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  padding: 16px;
+  resize: none;
+  outline: none;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: auto;
+  tab-size: 2;
+}
+
+.code-textarea::selection {
+  background: rgba(56, 189, 248, 0.3);
+}
+
+/* Output Console Pane */
+.editor-pane-output {
+  display: flex;
+  flex-direction: column;
+  background: var(--terminal-bg);
+}
+
+.output-header {
+  background: var(--terminal-header);
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clear-output-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.clear-output-btn:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.output-console {
+  flex: 1;
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--terminal-text);
+  overflow-y: auto;
+  max-height: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.output-console::-webkit-scrollbar {
+  width: 6px;
+}
+.output-console::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+
+/* Console Log Entries */
+.console-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  word-break: break-all;
+}
+
+.console-prefix {
+  color: #64748b;
+  user-select: none;
+  font-size: 0.8rem;
+}
+
+.console-log { color: #e2e8f0; }
+.console-string { color: #86efac; }      /* Light green */
+.console-number { color: #7dd3fc; }      /* Light blue */
+.console-boolean { color: #f472b6; }     /* Pink */
+.console-null, .console-undefined { color: #94a3b8; font-style: italic; }
+.console-object { color: #fde047; }      /* Yellow */
+.console-error {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.12);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid #ef4444;
+}
+
+.console-empty {
+  color: #475569;
+  font-style: italic;
+  padding: 12px 0;
+}
+
+/* Execution Status Footer */
+.editor-status-bar {
+  background: #090d16;
+  border-top: 1px solid var(--editor-border);
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+}
+.status-dot.running {
+  background: var(--accent-js);
+  animation: pulse 1s infinite;
+}
+.status-dot.error {
+  background: var(--danger);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

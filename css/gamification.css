@@ -1,0 +1,330 @@
+/* ==========================================================================
+   GAMIFICATION & QUIZ SYSTEM STYLING
+   Interactive Quizzes, XP Badges, Streaks & Achievement Gallery
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   TOPIC QUIZ CONTAINER & CARD
+   -------------------------------------------------------------------------- */
+.quiz-section {
+  background: linear-gradient(135deg, rgba(23, 31, 48, 0.9), rgba(15, 23, 42, 0.95));
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  margin: var(--space-2xl) 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--xp-gold), var(--streak-fire), var(--badge-purple));
+}
+
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.quiz-title-group h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quiz-title-group p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.quiz-score-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  color: var(--xp-gold);
+}
+
+/* --------------------------------------------------------------------------
+   QUIZ QUESTIONS LIST & OPTIONS
+   -------------------------------------------------------------------------- */
+.quiz-questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.quiz-question-item {
+  background: rgba(11, 15, 25, 0.6);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: border-color var(--transition-fast);
+}
+
+.quiz-question-item:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.quiz-question-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.question-number-badge {
+  background: var(--bg-surface);
+  color: var(--primary);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  margin-top: 2px;
+}
+
+.question-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.question-code-snippet {
+  background: #090d16;
+  border: 1px solid var(--editor-border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: #f1f5f9;
+  overflow-x: auto;
+}
+
+/* Options Grid */
+.quiz-options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quiz-option-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--bg-card-border);
+  cursor: pointer;
+  font-size: 0.92rem;
+  color: var(--text-main);
+  transition: all var(--transition-fast);
+}
+
+.quiz-option-label:hover {
+  background: var(--bg-surface-hover);
+  border-color: rgba(56, 189, 248, 0.4);
+  transform: translateX(4px);
+}
+
+.quiz-option-input {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--text-dim);
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.quiz-option-input::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform var(--transition-fast);
+  background: var(--primary);
+}
+
+.quiz-option-input:checked {
+  border-color: var(--primary);
+}
+
+.quiz-option-input:checked::before {
+  transform: scale(1);
+}
+
+.quiz-option-label.selected {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: var(--primary);
+}
+
+/* Graded States */
+.quiz-option-label.correct {
+  background: rgba(16, 185, 129, 0.15) !important;
+  border-color: var(--success) !important;
+  color: #6ee7b7 !important;
+}
+
+.quiz-option-label.incorrect {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border-color: var(--danger) !important;
+  color: #fca5a5 !important;
+}
+
+/* Explanation Box */
+.question-explanation {
+  display: none;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.question-explanation.visible {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+.question-explanation.correct-exp {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: #d1fae5;
+}
+
+.question-explanation.incorrect-exp {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: #fee2e2;
+}
+
+.quiz-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--bg-card-border);
+}
+
+/* --------------------------------------------------------------------------
+   BADGES & ACHIEVEMENTS MODAL
+   -------------------------------------------------------------------------- */
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.badge-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.badge-card.locked {
+  opacity: 0.45;
+  filter: grayscale(0.8);
+}
+
+.badge-card.unlocked {
+  border-color: rgba(168, 85, 247, 0.4);
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.4), rgba(23, 31, 48, 0.8));
+  box-shadow: 0 4px 16px rgba(168, 85, 247, 0.15);
+}
+
+.badge-card.unlocked:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.3);
+}
+
+.badge-icon-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(168, 85, 247, 0.15);
+  border: 2px solid rgba(168, 85, 247, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+}
+
+.badge-card.unlocked .badge-icon-circle {
+  border-color: #c084fc;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
+
+.badge-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.badge-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.badge-status-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  margin-top: 4px;
+}
+
+.badge-status-tag.unlocked-tag {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.badge-status-tag.locked-tag {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-dim);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

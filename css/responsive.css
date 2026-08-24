@@ -1,0 +1,142 @@
+/* ==========================================================================
+   RESPONSIVE DESIGN & MOBILE DRAWER STYLING
+   ========================================================================== */
+
+/* Tablet & Smaller Screens (< 1024px) */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 260px;
+  }
+
+  .main-content {
+    padding: var(--space-xl) var(--space-lg);
+  }
+
+  .header {
+    padding: 0 var(--space-lg);
+  }
+
+  .header-center {
+    max-width: 320px;
+    margin: 0 var(--space-md);
+  }
+}
+
+/* Mobile & Tablet Drawer Breakpoint (< 860px) */
+@media (max-width: 860px) {
+  .menu-toggle-btn {
+    display: flex;
+  }
+
+  .header-center {
+    display: none; /* Hide progress bar in header on mobile to avoid clutter */
+  }
+
+  .sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    bottom: 0;
+    z-index: 99;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.6);
+    background: var(--bg-secondary);
+    width: 280px;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Overlay behind open sidebar */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 98;
+  }
+
+  .sidebar-backdrop.open {
+    display: block;
+  }
+
+  .main-content {
+    padding: var(--space-lg) var(--space-md);
+    max-width: 100vw;
+  }
+
+  .topic-title {
+    font-size: 1.8rem;
+  }
+
+  .topic-description {
+    font-size: 1rem;
+  }
+
+  .lesson-nav-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lesson-nav-btn {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .lesson-nav-btn.next {
+    text-align: center;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-md);
+  }
+
+  .footer-links {
+    justify-content: center;
+  }
+}
+
+/* Small Mobile Screens (< 480px) */
+@media (max-width: 480px) {
+  .header {
+    padding: 0 var(--space-md);
+  }
+
+  .brand-text {
+    font-size: 1.05rem;
+  }
+
+  .stat-pill {
+    padding: 4px 8px;
+    font-size: 0.78rem;
+  }
+
+  .header-btn {
+    padding: 5px 10px;
+    font-size: 0.78rem;
+  }
+
+  .analogy-showcase {
+    padding: var(--space-md);
+  }
+
+  .quiz-section {
+    padding: var(--space-md);
+  }
+
+  .card {
+    padding: var(--space-md);
+  }
+
+  .code-textarea {
+    font-size: 0.82rem;
+    padding: 12px;
+  }
+}
