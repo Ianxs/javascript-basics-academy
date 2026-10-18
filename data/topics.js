@@ -1,6 +1,9 @@
 /* ==========================================================================
-   CURRICULUM TOPIC DATA (Strictly JavaScript Basics)
+   CURRICULUM TOPIC DATA (JavaScript Basics & Design Patterns)
    ========================================================================== */
+
+import FACTORY_PATTERNS from "./patterns-factories.js";
+import SINGLETON_PATTERNS from "./patterns-singletons.js";
 
 export const TOPICS_DATA = [
   {
@@ -572,6 +575,134 @@ console.log("🎉 Grade updated to:", studentProfile.currentGrade);
 // Add new property:
 studentProfile.honorsStudent = true;
 console.log("Full Profile Summary:", studentProfile);`
+  },
+  {
+    id: "factories",
+    number: "06",
+    title: "Factory Design Patterns",
+    subtitle: "Encapsulating object creation with 20 distinct JavaScript factory variations",
+    badge: "Patterns #1",
+    estimatedTime: "15 mins",
+    icon: "🏭",
+
+    definition: "A Factory Pattern provides a dedicated creation interface or function to produce objects, hiding the complex instantiation mechanics, parameter parsing, and subclassing logic from client code.",
+
+    analogy: {
+      title: "The Custom Vehicle Workshop & Assembly Line Analogy",
+      subtitle: "Ordering customized products without knowing factory manufacturing steps",
+      icon: "🏭",
+      description: "When you order a custom car from an automotive factory, you don't forge the steel, calibrate engine timing, or solder microchips yourself. You submit your requested specifications, and the factory delivers a fully operational vehicle.",
+      items: [
+        {
+          label: "Client Code (The Customer)",
+          desc: "Requests a product by key or configuration without needing to know internal constructor mechanics."
+        },
+        {
+          label: "Factory Function (The Assembly Line)",
+          desc: "Selects the appropriate blueprint, handles dependencies, initializes defaults, and returns a ready-to-use instance."
+        },
+        {
+          label: "Standard Interface (Polymorphism)",
+          desc: "All products share consistent methods (e.g. .deliver(), .calculate()), allowing interchangeable use throughout your application."
+        }
+      ]
+    },
+
+    sections: [
+      {
+        title: "1. Why Use Factory Patterns in JavaScript?",
+        content: `
+          <p>In JavaScript, object creation often starts with simple object literals <code>{ }</code> or <code>new ClassName()</code>. However, as applications scale, direct instantiation causes tight coupling and duplicate code.</p>
+          <ul>
+            <li><strong>Decoupling:</strong> Client code doesn't need to know the concrete class name or constructor arguments.</li>
+            <li><strong>Flexibility:</strong> Easily return different object implementations or cached instances based on configuration.</li>
+            <li><strong>Encapsulation:</strong> Hide private properties, API keys, or initialization rituals inside closures.</li>
+          </ul>
+        `
+      },
+      {
+        title: "2. The 20 Factory Pattern Variations Explorer",
+        content: `
+          <p>JavaScript supports numerous factory variations ranging from classic object-oriented factory methods to functional closures, lookup tables, and dependency injection containers.</p>
+          <p>Select any variation from the <strong>Interactive Pattern Explorer</strong> below to view its explanation and load its runnable code directly into the code runner sandbox!</p>
+        `
+      }
+    ],
+
+    patternCategory: "factories",
+    patternsList: FACTORY_PATTERNS,
+
+    keyTakeaways: [
+      "Use Factory functions when object creation requires decision logic, configuration merging, or dependency injection.",
+      "Factories protect callers from breaking changes when underlying classes or constructor parameters evolve.",
+      "Higher-order function factories and lookup tables are idiomatic, high-performance patterns in modern JavaScript."
+    ],
+
+    starterCode: FACTORY_PATTERNS[0].code
+  },
+  {
+    id: "singletons",
+    number: "07",
+    title: "Singleton Design Patterns",
+    subtitle: "Guaranteeing a single shared instance with 20 JavaScript singleton variations",
+    badge: "Patterns #2",
+    estimatedTime: "15 mins",
+    icon: "🔒",
+
+    definition: "A Singleton Pattern ensures that a particular class or resource has only one instance throughout the entire application lifecycle, and provides a global or centralized point of access to it.",
+
+    analogy: {
+      title: "The Central Town Clock & Government Treasury Analogy",
+      subtitle: "Why certain systems must have exactly one authoritative source",
+      icon: "🏛️",
+      description: "A town has many citizens, shops, and houses, but only one Central Clock Tower in the town square that sets official time for everyone. Having 5 different clock towers showing different minutes would cause chaos.",
+      items: [
+        {
+          label: "Single Source of Truth",
+          desc: "Guarantees that state (such as user XP, audio settings, or database pools) cannot become desynchronized across different parts of the application."
+        },
+        {
+          label: "Controlled Access",
+          desc: "Every component that queries the singleton communicates with the exact same in-memory object."
+        },
+        {
+          label: "Resource Conservation",
+          desc: "Prevents repeatedly establishing expensive database connections or re-parsing configuration files."
+        }
+      ]
+    },
+
+    sections: [
+      {
+        title: "1. When and Why Should You Use a Singleton?",
+        content: `
+          <p>Singletons are ideal for cross-cutting services that must coordinate shared state or manage scarce system resources:</p>
+          <ul>
+            <li><strong>Shared State Management:</strong> User session, active theme, progress trackers, and shopping cart.</li>
+            <li><strong>Resource Gateways:</strong> Database connection pools, API HTTP clients, WebSocket connections, and audio hardware controllers.</li>
+            <li><strong>Cross-Module Services:</strong> Central loggers, event dispatchers (Pub/Sub Event Bus), and feature flags.</li>
+          </ul>
+        `
+      },
+      {
+        title: "2. The 20 Singleton Pattern Variations Explorer",
+        content: `
+          <p>In JavaScript, singletons can be created using classes with static properties, closures, ES module exports, Object.freeze, Proxies, and Symbols.</p>
+          <p>Explore all 20 variations below and click <strong>'Load Into Playground'</strong> to test their behavior live!</p>
+        `
+      }
+    ],
+
+    patternCategory: "singletons",
+    patternsList: SINGLETON_PATTERNS,
+
+    keyTakeaways: [
+      "In modern ES Modules, exporting a single object instance is the cleanest and most natural Singleton pattern.",
+      "Object.freeze() turns a singleton object into an immutable, tamper-resistant system configuration.",
+      "Lazy singletons postpone expensive initialization until the resource is actually needed."
+    ],
+
+    starterCode: SINGLETON_PATTERNS[0].code
   }
 ];
 

@@ -304,6 +304,131 @@ console.log(hero.hp, hero.shield);`,
         explanation: "To navigate nested objects, chain property accessors together: data.user.city returns \"Tokyo\"."
       }
     ]
+  },
+  factories: {
+    topicId: "factories",
+    title: "Factory Patterns Mastery Quiz",
+    xpReward: 150,
+    questions: [
+      {
+        id: "f1",
+        question: "What is the primary benefit of using a Factory Pattern?",
+        options: [
+          "It forces every object in an application to share the exact same state",
+          "It decouples object creation logic from client code and encapsulates instantiation mechanics",
+          "It eliminates the need to ever write functions in JavaScript",
+          "It automatically saves all objects to local storage"
+        ],
+        correctIndex: 1,
+        explanation: "Factories encapsulate creation logic so client code only asks for what it needs without worrying about constructors, subclasses, or initialization steps."
+      },
+      {
+        id: "f2",
+        question: "Which Factory variation uses a JavaScript object dictionary or Map to look up creators without large switch/if ladders?",
+        options: [
+          "Factory with Object Mapping / Lookup Table",
+          "Abstract Factory",
+          "Constructor Factory",
+          "Prototype Factory"
+        ],
+        correctIndex: 0,
+        explanation: "Factory with Object Mapping or Dictionary Lookup stores creators keyed by string (e.g. { video: () => ..., audio: () => ... }), making lookups clean and O(1)."
+      },
+      {
+        id: "f3",
+        question: "What will this Simple Factory function print?",
+        codeSnippet: `function makeGreeter(lang) {
+  return lang === "es" ? () => "¡Hola!" : () => "Hello!";
+}
+const greet = makeGreeter("es");
+console.log(greet());`,
+        options: [
+          "Hello!",
+          "¡Hola!",
+          "undefined",
+          "Error: greet is not a function"
+        ],
+        correctIndex: 1,
+        explanation: "makeGreeter('es') returns the lambda function () => '¡Hola!', which prints '¡Hola!' when invoked."
+      },
+      {
+        id: "f4",
+        question: "Which pattern variation allows adding new product types at runtime without modifying the factory source code?",
+        options: [
+          "Factory with Registration",
+          "Static Factory",
+          "Function Factory with switch",
+          "Object Literal Factory"
+        ],
+        correctIndex: 0,
+        explanation: "Factory with Registration provides a register(type, constructor) method, adhering to the Open-Closed Principle (open for extension, closed for modification)."
+      }
+    ]
+  },
+  singletons: {
+    topicId: "singletons",
+    title: "Singleton Patterns Mastery Quiz",
+    xpReward: 150,
+    questions: [
+      {
+        id: "s1",
+        question: "What is the core guarantee of a Singleton Pattern?",
+        options: [
+          "Every function must accept only one single parameter",
+          "Only one single instance of a class/resource exists across the application lifecycle",
+          "It converts all asynchronous operations into single synchronous steps",
+          "It creates a separate instance for every single user thread"
+        ],
+        correctIndex: 1,
+        explanation: "A Singleton guarantees that a class or resource has exactly one instance, and provides a global access point to that single instance."
+      },
+      {
+        id: "s2",
+        question: "In modern JavaScript (ES Modules), what is the most idiomatic way to achieve a Module Singleton?",
+        options: [
+          "Exporting a single instantiated object (e.g. export default new MyService())",
+          "Putting every variable directly on window without modules",
+          "Using eval() to prevent recreation",
+          "Wrapping everything inside a while(true) loop"
+        ],
+        correctIndex: 0,
+        explanation: "Because ES modules are evaluated once and cached by the JavaScript runtime, exporting an instantiated class or object creates a clean, built-in Singleton."
+      },
+      {
+        id: "s3",
+        question: "What is the expected output when comparing instances from a classic Static Method Singleton?",
+        codeSnippet: `class Cache {
+  static #inst = null;
+  static getInstance() {
+    if (!this.#inst) this.#inst = new Cache();
+    return this.#inst;
+  }
+}
+const a = Cache.getInstance();
+const b = Cache.getInstance();
+console.log(a === b);`,
+        options: [
+          "false",
+          "true",
+          "undefined",
+          "ReferenceError"
+        ],
+        correctIndex: 1,
+        explanation: "Both calls return the exact same in-memory object reference stored in the private static field #inst, so a === b evaluates to true."
+      },
+      {
+        id: "s4",
+        question: "What does Object.freeze() provide when creating a Frozen Object Singleton?",
+        options: [
+          "It makes the object immutable by preventing addition, deletion, or modification of properties",
+          "It stores the object in the browser's IndexedDB permanently",
+          "It pauses code execution until all properties have loaded",
+          "It encrypts the object values using AES-256"
+        ],
+        correctIndex: 0,
+        explanation: "Object.freeze() seals the object and makes all properties read-only, preventing tampering or accidental modification across modules."
+      }
+    ]
   }
 };
 
