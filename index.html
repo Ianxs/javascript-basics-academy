@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="css/content.css">
   <link rel="stylesheet" href="css/editor.css">
   <link rel="stylesheet" href="css/gamification.css">
+  <link rel="stylesheet" href="css/auth.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
@@ -43,7 +44,7 @@
       <div class="course-progress-container">
         <div class="progress-labels">
           <span>Course Completion</span>
-          <span id="header-progress-text">0% Complete (0/5)</span>
+          <span id="header-progress-text">0% Complete (0/7)</span>
         </div>
         <div class="progress-track">
           <div class="progress-fill" id="header-progress-fill" style="width: 0%;"></div>
@@ -67,6 +68,28 @@
         <span>🏆</span>
         <span>Badges</span>
       </button>
+
+      <!-- User Auth / Profile Control -->
+      <div class="auth-wrapper">
+        <button class="auth-btn" id="header-auth-btn" title="Sign In or Register">
+          <span class="auth-icon">👤</span>
+          <span class="auth-label">Sign In</span>
+        </button>
+
+        <!-- Dropdown Menu for Logged-in User -->
+        <div class="user-menu-dropdown" id="header-user-menu">
+          <div class="user-menu-info">
+            <div class="user-menu-label">Signed in as</div>
+            <div class="user-menu-email" id="menu-user-email">user@example.com</div>
+            <div class="user-menu-status">
+              <span>●</span> Cloud Sync Active
+            </div>
+          </div>
+          <button class="user-menu-btn" id="header-logout-btn">
+            <span>🚪</span> Sign Out
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -118,6 +141,8 @@
         <a href="#functions">Functions</a>
         <a href="#arrays">Arrays</a>
         <a href="#objects">Objects</a>
+        <a href="#factories">Factories</a>
+        <a href="#singletons">Singletons</a>
       </div>
     </div>
   </footer>
@@ -160,20 +185,56 @@
     </div>
   </div>
 
+  <!-- Authentication Modal (Sign In / Sign Up) -->
+  <div class="modal-overlay" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+    <div class="modal-card" style="max-width: 460px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="auth-modal-title">
+          <span>⚡</span> Account &amp; Cloud Sync
+        </h2>
+        <button class="modal-close-btn" id="auth-modal-close" aria-label="Close modal">✕</button>
+      </div>
+
+      <p id="auth-modal-subtitle" style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: var(--space-md);">
+        Sign in to access your saved JavaScript course progress across devices via PostgreSQL.
+      </p>
+
+      <!-- Error message container -->
+      <div class="auth-error-box" id="auth-error-box" role="alert"></div>
+
+      <!-- Tab Buttons -->
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab-btn active" id="auth-tab-signin" type="button" role="tab">Sign In</button>
+        <button class="auth-tab-btn" id="auth-tab-signup" type="button" role="tab">Create Account</button>
+      </div>
+
+      <!-- Auth Form -->
+      <form id="auth-form" data-mode="signin" novalidate>
+        <div class="auth-form-group">
+          <label class="auth-form-label" for="auth-email">Email Address</label>
+          <input class="auth-form-input" type="email" id="auth-email" placeholder="name@school.edu" required autocomplete="email">
+        </div>
+
+        <div class="auth-form-group">
+          <label class="auth-form-label" for="auth-password">Password</label>
+          <input class="auth-form-input" type="password" id="auth-password" placeholder="At least 6 characters" required autocomplete="current-password">
+        </div>
+
+        <button class="btn btn-primary" id="auth-submit-btn" type="submit" style="width: 100%; margin-top: var(--space-sm); justify-content: center;">
+          Sign In &amp; Sync Progress
+        </button>
+      </form>
+
+      <div class="auth-guest-notice">
+        <strong>💡 Note:</strong> You can also continue as a <strong>Guest</strong>. Your XP, quizzes, and code progress will still be saved on this device via LocalStorage.
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div class="toast-container" id="toast-container" aria-live="polite"></div>
 
-  <!-- Core JavaScript Architecture -->
-  <script src="data/topics.js"></script>
-  <script src="data/quizzes.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/gamification.js"></script>
-  <script src="js/code-runner.js"></script>
-  <script src="js/editor-component.js"></script>
-  <script src="js/quiz-engine.js"></script>
-  <script src="js/content-renderer.js"></script>
-  <script src="js/navigation.js"></script>
-  <script src="js/app.js"></script>
-
+  <!-- Core Modular JavaScript Architecture (ES Modules) -->
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>

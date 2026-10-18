@@ -1,19 +1,34 @@
 /* ==========================================================================
    INTERACTIVE QUIZ ENGINE
-   Renders topic questions, grades answers, reveals explanations, and awards XP
+   Uses Quiz Question Factory and connects to StateManager and GamificationService.
    ========================================================================== */
 
-const QuizEngine = {
-  render(topicId, container) {
+import QuizQuestionFactory from "../factories/quiz-factory.js";
+import stateManager from "../services/state-manager.js";
+import gamificationService from "../services/gamification-service.js";
+import config from "../core/config.js";
+
+const TOPIC_BADGE_MAP = {
+  variables: "var_master",
+  datatypes: "type_detective",
+  functions: "func_wizard",
+  arrays: "array_ace",
+  objects: "object_overlord",
+  factories: "factory_pro",
+  singletons: "singleton_sage"
+};
+
+export default class QuizEngine {
+  static render(topicId, container, quizzesData) {
     if (!container) return;
 
-    const quizData = QUIZZES_DATA[topicId];
+    const quizData = quizzesData ? quizzesData[topicId] : null;
     if (!quizData) {
-      container.innerHTML = `<p style="color: var(--text-dim);">No quiz available for this topic yet.</p>`;
+      container.innerHTML = `<p style="color: var(--text-dim); margin-top: var(--space-md);">No quiz available for this topic yet.</p>`;
       return;
     }
 
-    const state = StorageManager.getState();
+    const state = stateManager.getState();
     const savedScore = state.quizScores[topicId];
 
     container.innerHTML = `
@@ -35,36 +50,7 @@ const QuizEngine = {
         </div>
 
         <form id="quiz-form-${topicId}" class="quiz-questions-list">
-          ${quizData.questions.map((q, qIndex) => `
-            <div class="quiz-question-item" id="q-item-${q.id}">
-              <div class="quiz-question-header">
-                <span class="question-number-badge">Q${qIndex + 1}</span>
-                <span class="question-text">${q.question}</span>
-              </div>
-
-              ${q.codeSnippet ? `
-                <pre class="question-code-snippet"><code>${this.escapeHtml(q.codeSnippet)}</code></pre>
-              ` : ''}
-
-              <div class="quiz-options-grid">
-                ${q.options.map((opt, optIndex) => `
-                  <label class="quiz-option-label" id="label-${q.id}-${optIndex}">
-                    <input
-                      type="radio"
-                      name="question-${q.id}"
-                      value="${optIndex}"
-                      class="quiz-option-input"
-                      required
-                    >
-                    <span>${this.escapeHtml(opt)}</span>
-                  </label>
-                `).join("")}
-              </div>
-
-              <!-- Explanation box revealed after submit -->
-              <div class="question-explanation" id="exp-${q.id}"></div>
-            </div>
-          `).join("")}
+          ${quizData.questions.map((q, idx) => QuizQuestionFactory.createQuestionHtml(q, idx)).join("")}
 
           <div class="quiz-actions">
             <button type="button" class="btn btn-secondary" id="btn-retake-${topicId}" style="display: none;">
@@ -78,29 +64,27 @@ const QuizEngine = {
       </section>
     `;
 
-    this.bindEvents(topicId, quizData);
-  },
+    this.#bindEvents(topicId, quizData, quizzesData);
+  }
 
-  bindEvents(topicId, quizData) {
+  static #bindEvents(topicId, quizData, quizzesData) {
     const form = document.getElementById(`quiz-form-${topicId}`);
     const retakeBtn = document.getElementById(`btn-retake-${topicId}`);
     const submitBtn = document.getElementById(`btn-submit-${topicId}`);
 
     if (!form) return;
 
-    // Highlight selected options on click
     form.querySelectorAll(".quiz-option-label").forEach(label => {
       label.addEventListener("click", () => {
         const radio = label.querySelector("input[type='radio']");
         const name = radio.name;
         form.querySelectorAll(`input[name='${name}']`).forEach(r => {
-          r.closest(".quiz-option-label").classList.remove("selected");
+          r.closest(".quiz-option-label")?.classList.remove("selected");
         });
         label.classList.add("selected");
       });
     });
 
-    // Form Submission
     form.addEventListener("submit", (e) => {
       e.preventDefault();
 
@@ -112,15 +96,13 @@ const QuizEngine = {
         const explanationEl = document.getElementById(`exp-${q.id}`);
         const userChoice = selectedRadio ? parseInt(selectedRadio.value, 10) : -1;
 
-        // Reset label styling
         q.options.forEach((_, optIndex) => {
           const optLabel = document.getElementById(`label-${q.id}-${optIndex}`);
-          optLabel.classList.remove("correct", "incorrect");
+          optLabel?.classList.remove("correct", "incorrect");
         });
 
-        // Always highlight the correct answer in green
         const correctLabel = document.getElementById(`label-${q.id}-${q.correctIndex}`);
-        if (correctLabel) correctLabel.classList.add("correct");
+        correctLabel?.classList.add("correct");
 
         if (userChoice === q.correctIndex) {
           correctCount++;
@@ -131,7 +113,7 @@ const QuizEngine = {
         } else {
           if (userChoice !== -1) {
             const wrongLabel = document.getElementById(`label-${q.id}-${userChoice}`);
-            if (wrongLabel) wrongLabel.classList.add("incorrect");
+            wrongLabel?.classList.add("incorrect");
           }
           if (explanationEl) {
             explanationEl.className = "question-explanation visible incorrect-exp";
@@ -139,63 +121,33 @@ const QuizEngine = {
           }
         }
 
-        // Disable all inputs after grading
         form.querySelectorAll(`input[name="question-${q.id}"]`).forEach(r => r.disabled = true);
       });
 
-      // Calculate score percentage
       const scorePercent = Math.round((correctCount / totalQuestions) * 100);
 
-      // Save to Storage
-      StorageManager.saveQuizScore(topicId, scorePercent);
-      StorageManager.markTopicCompleted(topicId);
+      // Save state
+      stateManager.saveQuizScore(topicId, scorePercent);
+      stateManager.markTopicCompleted(topicId);
 
-      // Update Gamification & Badges
-      const topicBadgeMap = {
-        variables: "var_master",
-        datatypes: "type_detective",
-        functions: "func_wizard",
-        arrays: "array_ace",
-        objects: "object_overlord"
-      };
-
-      if (topicBadgeMap[topicId]) {
-        GamificationEngine.checkBadge(topicBadgeMap[topicId]);
+      // Badge checks
+      if (TOPIC_BADGE_MAP[topicId]) {
+        gamificationService.checkBadge(TOPIC_BADGE_MAP[topicId]);
       }
 
       if (scorePercent === 100) {
-        GamificationEngine.checkBadge("perfect_score");
-        GamificationEngine.awardXP(100, `Perfect Score (${correctCount}/${totalQuestions})!`);
+        gamificationService.checkBadge("perfect_score");
+        gamificationService.awardXP(config.XP.QUIZ_PERFECT, `Perfect Score (${correctCount}/${totalQuestions})!`);
       } else {
-        GamificationEngine.awardXP(50, `Quiz Completed (${correctCount}/${totalQuestions})`);
+        gamificationService.awardXP(config.XP.QUIZ_COMPLETE, `Quiz Completed (${correctCount}/${totalQuestions})`);
       }
 
-      // Update UI
-      GamificationEngine.updateHeaderUI();
-      if (typeof Navigation !== "undefined") {
-        Navigation.updateSidebarTopicStatus();
-      }
-
-      // Hide submit, show retake
       submitBtn.style.display = "none";
       retakeBtn.style.display = "inline-flex";
     });
 
-    // Retake Button
-    if (retakeBtn) {
-      retakeBtn.addEventListener("click", () => {
-        this.render(topicId, document.getElementById(`quiz-section-wrapper-${topicId}`));
-      });
-    }
-  },
-
-  escapeHtml(str) {
-    if (typeof str !== "string") str = String(str);
-    return str
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+    retakeBtn?.addEventListener("click", () => {
+      this.render(topicId, document.getElementById(`quiz-section-wrapper-${topicId}`), quizzesData);
+    });
   }
-};
+}

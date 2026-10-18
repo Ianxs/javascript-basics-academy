@@ -1,15 +1,15 @@
 /* ==========================================================================
-   CODE EDITOR INTERACTIVE COMPONENT
-   Line numbering, Tab indentation, Shortcuts, Copy & Reset
+   CODE EDITOR COMPONENT
    ========================================================================== */
 
-const EditorComponent = {
-  create(topic, container) {
+import CodeRunner from "./code-runner.js";
+
+export default class EditorComponent {
+  static create(topic, container) {
     if (!container) return;
 
     container.innerHTML = `
       <div class="code-runner-container" id="editor-${topic.id}">
-        <!-- Editor Header / Toolbar -->
         <div class="editor-toolbar">
           <div class="editor-title-group">
             <div class="window-dots">
@@ -36,9 +36,7 @@ const EditorComponent = {
           </div>
         </div>
 
-        <!-- Split Workspace: Code + Terminal Output -->
         <div class="editor-workspace">
-          <!-- Code Input -->
           <div class="editor-pane-code">
             <div class="line-numbers" id="lines-${topic.id}">1</div>
             <textarea
@@ -51,7 +49,6 @@ const EditorComponent = {
             >${topic.starterCode}</textarea>
           </div>
 
-          <!-- Live Output Console -->
           <div class="editor-pane-output">
             <div class="output-header">
               <span>Terminal Console Output</span>
@@ -63,7 +60,6 @@ const EditorComponent = {
           </div>
         </div>
 
-        <!-- Editor Status Footer -->
         <div class="editor-status-bar">
           <div class="status-indicator">
             <span class="status-dot" id="status-dot-${topic.id}"></span>
@@ -74,10 +70,10 @@ const EditorComponent = {
       </div>
     `;
 
-    this.bindEvents(topic);
-  },
+    this.#bindEvents(topic);
+  }
 
-  bindEvents(topic) {
+  static #bindEvents(topic) {
     const textarea = document.getElementById(`textarea-${topic.id}`);
     const lineNumbers = document.getElementById(`lines-${topic.id}`);
     const consoleOutput = document.getElementById(`console-${topic.id}`);
@@ -89,37 +85,28 @@ const EditorComponent = {
 
     if (!textarea || !lineNumbers) return;
 
-    // Update line numbering helper
     const updateLineNumbers = () => {
       const lineCount = textarea.value.split("\n").length;
       lineNumbers.innerHTML = Array.from({ length: lineCount }, (_, i) => i + 1).join("<br>");
     };
 
-    // Initial line numbers
     updateLineNumbers();
 
-    // Event: Input change in editor
     textarea.addEventListener("input", updateLineNumbers);
-
-    // Event: Scroll sync between line numbers & textarea
     textarea.addEventListener("scroll", () => {
       lineNumbers.scrollTop = textarea.scrollTop;
     });
 
-    // Event: Handle Tab key for 2-space indentation
     textarea.addEventListener("keydown", (e) => {
       if (e.key === "Tab") {
         e.preventDefault();
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
-
-        // Insert 2 spaces
         textarea.value = textarea.value.substring(0, start) + "  " + textarea.value.substring(end);
         textarea.selectionStart = textarea.selectionEnd = start + 2;
         updateLineNumbers();
       }
 
-      // Shortcut: Ctrl+Enter or Cmd+Enter to Run
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
         e.preventDefault();
         runCode();
@@ -130,36 +117,24 @@ const EditorComponent = {
       CodeRunner.execute(textarea.value, consoleOutput, statusDot);
     };
 
-    // Run Button
-    if (runBtn) {
-      runBtn.addEventListener("click", runCode);
-    }
+    runBtn?.addEventListener("click", runCode);
 
-    // Reset Button
-    if (resetBtn) {
-      resetBtn.addEventListener("click", () => {
-        textarea.value = topic.starterCode;
-        updateLineNumbers();
-        consoleOutput.innerHTML = `<div class="console-empty">Code reset to initial state.</div>`;
-      });
-    }
+    resetBtn?.addEventListener("click", () => {
+      textarea.value = topic.starterCode;
+      updateLineNumbers();
+      consoleOutput.innerHTML = `<div class="console-empty">Code reset to initial state.</div>`;
+    });
 
-    // Copy Button
-    if (copyBtn) {
-      copyBtn.addEventListener("click", () => {
-        navigator.clipboard.writeText(textarea.value).then(() => {
-          const originalText = copyBtn.innerHTML;
-          copyBtn.innerHTML = "✅ Copied!";
-          setTimeout(() => copyBtn.innerHTML = originalText, 1500);
-        });
+    copyBtn?.addEventListener("click", () => {
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        const originalText = copyBtn.innerHTML;
+        copyBtn.innerHTML = "✅ Copied!";
+        setTimeout(() => copyBtn.innerHTML = originalText, 1500);
       });
-    }
+    });
 
-    // Clear Output Button
-    if (clearBtn) {
-      clearBtn.addEventListener("click", () => {
-        consoleOutput.innerHTML = `<div class="console-empty">Console cleared.</div>`;
-      });
-    }
+    clearBtn?.addEventListener("click", () => {
+      consoleOutput.innerHTML = `<div class="console-empty">Console cleared.</div>`;
+    });
   }
-};
+}

@@ -1,32 +1,54 @@
 /* ==========================================================================
-   NAVIGATION & ROUTING MANAGER
-   Sidebar rendering, hash navigation, mobile drawer handling
+   NAVIGATION & ROUTING MANAGER (ES Module)
+   Sidebar rendering, hash navigation, mobile drawer, and progress reset modal
    ========================================================================== */
 
-const Navigation = {
-  currentTopicId: null,
+import stateManager from "../services/state-manager.js";
+import gamificationService from "../services/gamification-service.js";
+import ContentRenderer from "./content-renderer.js";
+import EventBus, { EVENTS } from "../core/event-bus.js";
+import { showToast } from "../factories/toast-factory.js";
 
-  init() {
+class NavigationManager {
+  currentTopicId = null;
+  topics = [];
+  quizzes = null;
+  #viewedThisSession = new Set();
+
+  init({ topics = [], quizzes = null } = {}) {
+    this.topics = topics;
+    this.quizzes = quizzes;
+
     this.renderSidebar();
     this.setupHashListener();
     this.setupMobileMenu();
     this.setupResetModal();
-  },
+
+    // Keep sidebar tick marks synchronized with state changes
+    EventBus.on(EVENTS.STATE_CHANGED, () => this.updateSidebarTopicStatus());
+    EventBus.on(EVENTS.STATE_RESET, () => {
+      this.#viewedThisSession.clear();
+      this.renderSidebar();
+      if (this.topics.length > 0) {
+        this.setActiveTopic(this.topics[0].id);
+      }
+    });
+  }
 
   renderSidebar() {
     const navList = document.getElementById("sidebar-topics-list");
-    if (!navList) return;
+    if (!navList || !this.topics.length) return;
 
-    const state = StorageManager.getState();
+    const state = stateManager.getState();
 
-    navList.innerHTML = TOPICS_DATA.map((topic) => {
+    navList.innerHTML = this.topics.map((topic) => {
       const isCompleted = state.completedTopics.includes(topic.id);
       return `
         <li>
           <a href="#${topic.id}" class="topic-nav-item" id="nav-item-${topic.id}" data-topic="${topic.id}">
             <div class="topic-item-left">
               <span class="topic-num">${topic.number}</span>
-              <span>${topic.title}</span>
+              <span>${topic.icon || ''} ${topic.title}</span>
             </div>
             <span class="topic-status-icon ${isCompleted ? 'completed' : ''}" id="status-icon-${topic.id}">
               ${isCompleted ? '✓' : '○'}
@@ -35,11 +57,11 @@ const Navigation = {
         </li>
       `;
     }).join("");
-  },
+  }
 
   updateSidebarTopicStatus() {
-    const state = StorageManager.getState();
-    TOPICS_DATA.forEach(topic => {
+    const state = stateManager.getState();
+    this.topics.forEach(topic => {
       const icon = document.getElementById(`status-icon-${topic.id}`);
       if (icon) {
         const isCompleted = state.completedTopics.includes(topic.id);
@@ -47,10 +69,11 @@ const Navigation = {
         icon.textContent = isCompleted ? '✓' : '○';
       }
     });
-  },
+  }
 
   setActiveTopic(topicId) {
-    const topic = TOPICS_DATA.find(t => t.id === topicId) || TOPICS_DATA[0];
+    if (!this.topics.length) return;
+    const topic = this.topics.find(t => t.id === topicId) || this.topics[0];
     this.currentTopicId = topic.id;
 
     // Update active class in sidebar
@@ -62,7 +85,7 @@ const Navigation = {
 
     // Render topic in main view
     const mainContainer = document.getElementById("main-topic-view");
-    ContentRenderer.renderTopic(topic, mainContainer);
+    ContentRenderer.renderTopic(topic, mainContainer, this.topics, this.quizzes);
 
     // Scroll to top
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -70,25 +93,27 @@ const Navigation = {
     // Close mobile drawer if open
     this.closeMobileDrawer();
 
-    // Award read XP on first view
-    StorageManager.updateXP(10);
-    GamificationEngine.updateHeaderUI();
-  },
+    // Award read XP only on the first view of each topic this session
+    if (!this.#viewedThisSession.has(topic.id)) {
+      this.#viewedThisSession.add(topic.id);
+      stateManager.addXP(10);
+      gamificationService.updateHeaderUI();
+    }
+  }
 
   setupHashListener() {
     const handleHash = () => {
       const hash = window.location.hash.replace("#", "");
-      if (hash && TOPICS_DATA.some(t => t.id === hash)) {
+      if (hash && this.topics.some(t => t.id === hash)) {
         this.setActiveTopic(hash);
-      } else {
-        // Default to first topic
-        window.location.hash = `#${TOPICS_DATA[0].id}`;
+      } else if (this.topics.length > 0) {
+        window.location.hash = `#${this.topics[0].id}`;
       }
     };
 
     window.addEventListener("hashchange", handleHash);
     handleHash();
-  },
+  }
 
   setupMobileMenu() {
     const toggleBtn = document.getElementById("menu-toggle-btn");
@@ -107,14 +132,14 @@ const Navigation = {
         this.closeMobileDrawer();
       });
     }
-  },
+  }
 
   closeMobileDrawer() {
     const sidebar = document.getElementById("app-sidebar");
     const backdrop = document.getElementById("sidebar-backdrop");
     if (sidebar) sidebar.classList.remove("open");
     if (backdrop) backdrop.classList.remove("open");
-  },
+  }
 
   setupResetModal() {
     const resetBtn = document.getElementById("reset-all-btn");
@@ -132,13 +157,15 @@ const Navigation = {
 
     if (confirmBtn && resetModal) {
       confirmBtn.addEventListener("click", () => {
-        StorageManager.resetAllProgress();
         resetModal.classList.remove("active");
-        this.renderSidebar();
-        GamificationEngine.updateHeaderUI();
-        this.setActiveTopic(TOPICS_DATA[0].id);
-        GamificationEngine.showToast("All course progress has been reset!", "xp");
+        // The STATE_RESET event (emitted by stateManager) re-renders the sidebar and first topic
+        stateManager.resetAllProgress().then(() => {
+          showToast("All course progress has been reset!", "xp");
+        });
       });
     }
   }
-};
+}
+
+const navigation = new NavigationManager();
+export default navigation;

@@ -3,7 +3,7 @@
    3-5 Questions per Topic with In-Depth Explanations
    ========================================================================== */
 
-const QUIZZES_DATA = {
+export const QUIZZES_DATA = {
   variables: {
     topicId: "variables",
     title: "Variables Mastery Quiz",
@@ -306,3 +306,9 @@ console.log(hero.hp, hero.shield);`,
     ]
   }
 };
+
+if (typeof window !== "undefined") {
+  window.QUIZZES_DATA = QUIZZES_DATA;
+}
+
+export default QUIZZES_DATA;

@@ -2,7 +2,7 @@
    CURRICULUM TOPIC DATA (Strictly JavaScript Basics)
    ========================================================================== */
 
-const TOPICS_DATA = [
+export const TOPICS_DATA = [
   {
     id: "variables",
     number: "01",
@@ -574,3 +574,9 @@ studentProfile.honorsStudent = true;
 console.log("Full Profile Summary:", studentProfile);`
   }
 ];
+
+if (typeof window !== "undefined") {
+  window.TOPICS_DATA = TOPICS_DATA;
+}
+
+export default TOPICS_DATA;

@@ -1,23 +1,37 @@
 /* ==========================================================================
-   APPLICATION ENTRY POINT & BOOTSTRAP
+   APPLICATION ENTRY POINT & BOOTSTRAP (ES Module)
    ========================================================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("🚀 JS Basics Academy Initializing...");
+import Logger from "./core/logger.js";
+import stateManager from "./services/state-manager.js";
+import AuthUI from "./ui/auth-ui.js";
+import gamificationService from "./services/gamification-service.js";
+import navigation from "./ui/navigation.js";
+import { TOPICS_DATA } from "../data/topics.js";
+import { QUIZZES_DATA } from "../data/quizzes.js";
+import { showToast } from "./factories/toast-factory.js";
 
-  // 1. Initialize Gamification & Streaks
-  GamificationEngine.init();
+const logger = Logger.getInstance();
 
-  // 2. Initialize Navigation & Render first topic
-  Navigation.init();
+document.addEventListener("DOMContentLoaded", async () => {
+  logger.info("🚀 JS Basics Academy Initializing (Modular Architecture)...");
 
-  // 3. Welcome Toast for first-time visitors
-  const state = StorageManager.getState();
+  // 1. Initialize Authentication UI & Listeners
+  AuthUI.init();
+
+  // 2. Initialize Gamification & Streaks (7 topics)
+  gamificationService.init({ totalTopics: TOPICS_DATA.length });
+
+  // 3. Initialize Navigation & Render first topic
+  navigation.init({ topics: TOPICS_DATA, quizzes: QUIZZES_DATA });
+
+  // 4. Welcome Toast for first-time visitors
+  const state = stateManager.getState();
   if (state.xp === 0) {
     setTimeout(() => {
-      GamificationEngine.showToast("👋 Welcome to JS Academy! Start with Topic 1: Variables.", "xp");
+      showToast("👋 Welcome to JS Academy! Start with Topic 1: Variables.", "xp");
     }, 800);
   }
 
-  console.log("✅ JS Basics Academy Ready!");
+  logger.info(`✅ JS Basics Academy Ready with ${TOPICS_DATA.length} curriculum topics & 40 Design Patterns!`);
 });
