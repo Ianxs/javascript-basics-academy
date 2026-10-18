@@ -1,0 +1,20 @@
+{
+  "name": "js-basics-academy",
+  "version": "1.0.0",
+  "description": "Interactive, gamified W3Schools-style learning platform for JavaScript Basics.",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve . -l 8080",
+    "dev": "npx serve . -l 8080",
+    "dev:backend": ".\\backend\\venv\\Scripts\\python.exe -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload",
+    "serve": "npx serve . -l 8080"
+  },
+  "keywords": [
+    "javascript",
+    "education",
+    "w3schools",
+    "gamification"
+  ],
+  "author": "",
+  "license": "MIT"
+}
